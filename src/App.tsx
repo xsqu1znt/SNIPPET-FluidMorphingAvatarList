@@ -232,6 +232,8 @@ function Card({ reverse, setState }: { reverse?: boolean; setState: (state: "row
                 <motion.span layout>
                     Inspired by <br />{" "}
                     <span className="cursor-pointer text-indigo-400 hover:brightness-50">@bossadizenith</span>
+                    <br />
+                    <span className="cursor-pointer text-indigo-400 hover:brightness-50">@t_bekkers</span>
                 </motion.span>
             </motion.div>
         </motion.div>
