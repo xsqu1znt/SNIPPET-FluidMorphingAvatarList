@@ -1,5 +1,5 @@
+import { AnimatePresence, motion, MotionConfig, type Transition } from "motion/react";
 import { useState } from "react";
-import { AnimatePresence, hover, motion, MotionConfig, type Transition } from "motion/react";
 
 const AVATARS = [
     { id: 1, src: "/avatars/11.svg", name: "Alayna", status: "online", bio: "Frontend Dev" },
@@ -17,7 +17,7 @@ const AVATARS = [
 const iOSSpring: Transition = {
     type: "spring",
     stiffness: 300,
-    damping: 30,
+    damping: 20,
     mass: 1
 };
 
@@ -37,9 +37,9 @@ function List({
             key="list"
             layout
             layoutId="morph-container"
-            initial={{ opacity: 0, filter: "blur(10px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, filter: "blur(10px)" }}
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            // exit={{ scale: 2 }}
             className="relative flex w-80 flex-col items-center gap-4 rounded-3xl border border-black/20 bg-white p-1"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
@@ -63,89 +63,99 @@ function List({
                 {/* Header - Right */}
                 <motion.div layout className="mr-2 flex items-center">
                     {/* Button */}
-                    <motion.button
-                        layout
-                        className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white"
-                        onClick={() => setState("card")}
-                    >
-                        <motion.span
-                            layout
-                            className="ease-overshoot mr-1 transition-all duration-300 group-hover:mr-0 group-hover:opacity-0"
+                    <AnimatePresence mode="popLayout">
+                        <motion.button
+                            // layout
+                            initial={{ translateX: "1.5rem" }}
+                            animate={{ translateX: 0 }}
+                            className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white"
+                            onClick={() => setState("card")}
                         >
-                            +
-                        </motion.span>
-                        Follow
-                        <motion.span
-                            layout
-                            className="ease-overshoot -ml-3 opacity-0 transition-all duration-300 group-hover:ml-1 group-hover:opacity-100"
-                        >
-                            {"->"}
-                        </motion.span>
-                    </motion.button>
+                            <motion.span
+                                layout
+                                className="ease-overshoot mr-1 transition-all duration-300 group-hover:mr-0 group-hover:opacity-0"
+                            >
+                                +
+                            </motion.span>
+                            Follow
+                            <motion.span
+                                layout
+                                className="ease-overshoot -ml-3 opacity-0 transition-all duration-300 group-hover:ml-1 group-hover:opacity-100"
+                            >
+                                {"->"}
+                            </motion.span>
+                        </motion.button>
+                    </AnimatePresence>
                 </motion.div>
             </motion.div>
 
             {/* Avatars */}
-            <motion.div
-                layout
-                className={`${isColumn ? "max-h-52 w-full flex-col overflow-y-scroll" : "items-center overflow-x-scroll p-2"} relative flex gap-2 rounded-[22px] bg-black/4`}
-            >
-                {AVATARS.map((avatar, idx) => (
-                    <motion.div
-                        layout
-                        key={avatar.id}
-                        animate="initial"
-                        initial="initial"
-                        whileHover="hovered"
-                        variants={{
-                            initial: { backgroundColor: "#e8ebee" },
-                            hovered: { backgroundColor: !isColumn ? "#e8ebee" : "#DCDEE1" }
-                        }}
-                        className={`group flex shrink-0 items-center gap-2 rounded-[20px] ${isColumn ? "px-1 py-2" : ""}`}
-                    >
-                        <motion.div layout className="relative">
-                            <motion.img
-                                layout
-                                draggable={false}
-                                variants={{
-                                    initial: { rotate: 0, scale: 1 },
-                                    hovered: { rotate: idx % 2 ? -10 : 10, scale: 1.05 }
-                                }}
-                                className="size-12 select-none"
-                                src={avatar.src}
-                            />
+            <AnimatePresence mode="popLayout">
+                <motion.div
+                    key="list-content"
+                    layout
+                    initial={{ opacity: 0, translateY: "-25%" }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    exit={{ opacity: 0, translateY: "-25%" }}
+                    className={`${isColumn ? "max-h-52 w-full flex-col overflow-y-scroll" : "items-center overflow-x-scroll p-2"} relative flex gap-2 rounded-[22px] bg-black/4`}
+                >
+                    {AVATARS.map((avatar, idx) => (
+                        <motion.div
+                            layout
+                            key={avatar.id}
+                            animate="initial"
+                            initial="initial"
+                            whileHover="hovered"
+                            variants={{
+                                initial: { backgroundColor: "#e8ebee" },
+                                hovered: { backgroundColor: !isColumn ? "#e8ebee" : "#DCDEE1" }
+                            }}
+                            className={`group flex shrink-0 items-center gap-2 rounded-[20px] ${isColumn ? "px-1 py-2" : ""}`}
+                        >
+                            <motion.div layout className="relative">
+                                <motion.img
+                                    layout
+                                    draggable={false}
+                                    variants={{
+                                        initial: { rotate: 0, scale: 1 },
+                                        hovered: { rotate: idx % 2 ? -10 : 10, scale: 1.05 }
+                                    }}
+                                    className="size-12 select-none"
+                                    src={avatar.src}
+                                />
 
-                            {/* Status */}
-                            <motion.div layout>
-                                <motion.div
-                                    layout
-                                    className={`absolute right-0 -bottom-0.5 size-4 rounded-full bg-[#e5e8eb]`}
-                                />
-                                <motion.div
-                                    layout
-                                    className={`animate-flash absolute right-0 -bottom-0.5 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ${avatar.status === "dnd" ? "bg-red-400" : avatar.status === "idle" ? "bg-yellow-400" : "bg-green-400"}`}
-                                    style={{ animationDelay: `${300 * idx}ms` }}
-                                />
+                                {/* Status */}
+                                <motion.div layout>
+                                    <motion.div
+                                        layout
+                                        className={`absolute right-0 -bottom-0.5 size-4 rounded-full bg-[#e5e8eb]`}
+                                    />
+                                    <motion.div
+                                        layout
+                                        className={`animate-flash absolute right-0 -bottom-0.5 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ${avatar.status === "dnd" ? "bg-red-400" : avatar.status === "idle" ? "bg-yellow-400" : "bg-green-400"}`}
+                                        style={{ animationDelay: `${300 * idx}ms` }}
+                                    />
+                                </motion.div>
                             </motion.div>
+
+                            {isColumn && (
+                                <motion.div
+                                    layout
+                                    className="animate-fadeIn flex flex-col gap-0.5 opacity-0"
+                                    style={{ animationDelay: `${100 * idx}ms` }}
+                                >
+                                    <motion.span layout className="text-sm font-medium">
+                                        {avatar.name}
+                                    </motion.span>
+                                    <motion.span layout className="text-xs text-black/50">
+                                        {avatar.bio}
+                                    </motion.span>
+                                </motion.div>
+                            )}
                         </motion.div>
-
-                        {isColumn && (
-                            <motion.div
-                                layout
-                                className="animate-fadeIn flex flex-col gap-0.5 opacity-0"
-                                style={{ animationDelay: `${100 * idx}ms` }}
-                            >
-                                <motion.span layout className="text-sm font-medium">
-                                    {avatar.name}
-                                </motion.span>
-                                <motion.span layout className="text-xs text-black/50">
-                                    {avatar.bio}
-                                </motion.span>
-                            </motion.div>
-                        )}
-                    </motion.div>
-                ))}
-            </motion.div>
+                    ))}
+                </motion.div>
+            </AnimatePresence>
 
             {/* Floating Controls */}
             <motion.div
@@ -170,25 +180,30 @@ function List({
 function Card({ setState }: { setState: (state: "row" | "column" | "card") => void }) {
     return (
         <motion.div
+            key="card"
             layout
-            key="Card"
             layoutId="morph-container"
-            initial={{ opacity: 0, filter: "blur(10px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)", transition: { duration: 0.5 } }}
-            className="flex flex-col gap-4 rounded-2xl border border-black/20 bg-white p-6"
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            className="flex w-80 flex-col gap-4 overflow-hidden rounded-2xl border border-black/20 bg-white p-6"
         >
             <motion.button
+                // layout
+                initial={{ translateX: "-1.5rem" }}
+                animate={{ translateX: 0 }}
                 className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white"
                 onClick={() => setState("row")}
             >
-                <motion.span className="ease-overshoot -mr-3 opacity-0 transition-all duration-300 group-hover:mr-1 group-hover:opacity-100">
+                <motion.span
+                    layout
+                    className="ease-overshoot -mr-3 opacity-0 transition-all duration-300 group-hover:mr-1 group-hover:opacity-100"
+                >
                     {"<-"}
                 </motion.span>
                 Back
             </motion.button>
 
-            <span>This is another card</span>
+            <motion.span layout>@guniqueg</motion.span>
         </motion.div>
     );
 }
