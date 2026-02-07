@@ -1,8 +1,6 @@
 import { AnimatePresence, motion, MotionConfig, type Transition } from "motion/react";
 import { useState } from "react";
 
-// --- Constants ---
-
 const AVATARS = [
     { id: 1, src: "/avatars/11.svg", name: "Alayna", status: "online", bio: "Frontend Dev" },
     { id: 2, src: "/avatars/2.svg", name: "Alex", status: "idle", bio: "Backend Dev" },
@@ -23,8 +21,6 @@ const iOSSpring: Transition = {
     mass: 1
 };
 
-// --- Sub-components ---
-
 function FloatingControls({
     isHovered,
     isReversed,
@@ -38,6 +34,14 @@ function FloatingControls({
     setState: (s: "row" | "column" | "card") => void;
     toggleReverse: () => void;
 }) {
+    const toggleLayout = () => {
+        if (state === "row") {
+            setState("column");
+        } else if (state === "column") {
+            setState("row");
+        }
+    };
+
     return (
         <AnimatePresence>
             {state !== "card" && (
@@ -56,17 +60,13 @@ function FloatingControls({
                 >
                     <motion.button
                         layout
-                        className={`h-3 w-6 cursor-pointer rounded-sm transition-colors duration-200 ${state === "row" ? "bg-black" : "border-2 border-black/25 hover:border-transparent hover:bg-black/40"}`}
-                        onClick={() => setState("row")}
+                        // md:h-8 md:w-8 | md:h-4 md:w-8
+                        className={`${state === "column" ? "h-4 w-4 md:h-6 md:w-6" : "h-3 w-6 md:h-4 md:w-8"} cursor-pointer rounded-sm border-2 border-black/25 transition-all duration-200 hover:border-transparent hover:bg-black/40`}
+                        onClick={toggleLayout}
                     />
                     <motion.button
                         layout
-                        className={`h-6 w-4 cursor-pointer rounded-sm transition-colors duration-200 ${state === "column" ? "bg-black" : "border-2 border-black/25 hover:border-transparent hover:bg-black/40"}`}
-                        onClick={() => setState("column")}
-                    />
-                    <motion.button
-                        layout
-                        className={`h-4 w-4 cursor-pointer rounded-full transition-colors duration-200 ${isReversed ? "bg-black" : "border-2 border-black/25 hover:border-transparent hover:bg-black/40"}`}
+                        className={`h-4 w-4 cursor-pointer rounded-full transition-colors duration-200 md:h-6 md:w-6 ${isReversed ? "bg-black" : "border-2 border-black/25 hover:border-transparent hover:bg-black/40"}`}
                         onClick={() => toggleReverse()}
                     />
                 </motion.div>
@@ -77,12 +77,10 @@ function FloatingControls({
 
 function List({
     reverse,
-    state,
     setState,
     isColumn
 }: {
     reverse?: boolean;
-    state: "row" | "column" | "card";
     setState: (state: "row" | "column" | "card") => void;
     isColumn: boolean;
 }) {
@@ -94,16 +92,22 @@ function List({
             initial={{ opacity: 0, filter: "blur(5px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(5px)" }}
-            // Added overflow-hidden to prevent avatars flying outside during exit
-            className={`relative flex w-80 ${reverse ? "flex-col-reverse" : "flex-col"} items-center gap-4 overflow-hidden rounded-3xl border border-black/20 bg-white p-1`}
+            className={`relative flex w-80 md:w-lg lg:w-2xl ${reverse ? "flex-col-reverse" : "flex-col"} items-center gap-4 overflow-hidden rounded-3xl border border-black/20 bg-white p-1 md:p-2 lg:p-2.5`}
             style={{ boxShadow: "inset 0 5px 5px #F8F8F8, inset 0 -1px 2px #D2D7DB" }}
         >
             <motion.div layout className="flex w-full justify-between">
                 <motion.div layout className={`${reverse ? "mb-2" : "mt-2"} ml-1.5 flex items-center gap-2`}>
-                    <motion.img layout draggable={false} className="size-12 rounded-full select-none" src="/avatars/1.svg" />
+                    <motion.img
+                        layout
+                        draggable={false}
+                        className="size-12 rounded-full select-none md:size-24 lg:size-28"
+                        src="/avatars/1.svg"
+                    />
                     <motion.div layout className="flex flex-col gap-0.5">
-                        <motion.h1 layout>Octave Labs</motion.h1>
-                        <motion.p layout className="text-xs text-black/50">
+                        <motion.h1 layout className="md:text-lg lg:text-xl">
+                            Octave Labs
+                        </motion.h1>
+                        <motion.p layout className="text-xs text-black/50 md:text-lg lg:text-xl">
                             100+ Connections
                         </motion.p>
                     </motion.div>
@@ -111,10 +115,9 @@ function List({
 
                 <motion.div layout className="mr-2 flex items-center">
                     <motion.button
-                        // layout
                         initial={{ translateX: "0.5rem" }}
                         animate={{ translateX: 0 }}
-                        className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white"
+                        className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white md:text-base lg:text-lg"
                         onClick={() => setState("card")}
                     >
                         <motion.span
@@ -139,9 +142,7 @@ function List({
                 layout
                 initial={{ opacity: 0, translateX: "10rem" }}
                 animate={{ opacity: 1, translateX: 0 }}
-                // Reduced Y exit value to keep it contained
-                // exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 2 } }}
-                className={`${isColumn ? "max-h-52 w-full flex-col overflow-y-scroll" : "items-center overflow-x-scroll p-2"} relative z-10 flex gap-2 rounded-[22px] bg-black/4`}
+                className={`${isColumn ? "max-h-52 w-full flex-col overflow-y-scroll md:max-h-80" : "items-center overflow-x-scroll p-2"} relative z-10 flex gap-2 rounded-[22px] bg-black/4`}
             >
                 {AVATARS.map((avatar, idx) => (
                     <motion.div
@@ -162,13 +163,13 @@ function List({
                                     initial: { rotate: 0, scale: 1 },
                                     hovered: { rotate: idx % 2 ? -10 : 10, scale: 1.05 }
                                 }}
-                                className="size-12 select-none"
+                                className="size-12 select-none md:size-24 lg:size-28"
                                 src={avatar.src}
                             />
                             <motion.div layout>
-                                <div className="absolute right-0 -bottom-0.5 size-4 rounded-full bg-[#e5e8eb]" />
+                                <div className="absolute right-0 -bottom-0.5 size-4 rounded-full bg-[#e5e8eb] md:size-8" />
                                 <div
-                                    className={`animate-flash absolute right-0 -bottom-0.5 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ${avatar.status === "dnd" ? "bg-red-400" : avatar.status === "idle" ? "bg-yellow-400" : "bg-green-400"}`}
+                                    className={`animate-flash absolute right-0 -bottom-0.5 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full md:size-4 ${avatar.status === "dnd" ? "bg-red-400" : avatar.status === "idle" ? "bg-yellow-400" : "bg-green-400"}`}
                                     style={{ animationDelay: `${300 * idx}ms` }}
                                 />
                             </motion.div>
@@ -180,10 +181,10 @@ function List({
                                 className="animate-fadeIn flex flex-col gap-0.5 opacity-0"
                                 style={{ animationDelay: `${100 * idx}ms` }}
                             >
-                                <motion.span layout className="text-sm font-medium">
+                                <motion.span layout className="text-sm font-medium md:text-lg lg:text-xl">
                                     {avatar.name}
                                 </motion.span>
-                                <motion.span layout className="text-xs text-black/50">
+                                <motion.span layout className="text-xs text-black/50 md:text-base lg:text-lg">
                                     {avatar.bio}
                                 </motion.span>
                             </motion.div>
@@ -196,6 +197,8 @@ function List({
 }
 
 function Card({ reverse, setState }: { reverse?: boolean; setState: (state: "row" | "column" | "card") => void }) {
+    const returnState = () => setState("row");
+
     return (
         <motion.div
             key="card"
@@ -204,15 +207,15 @@ function Card({ reverse, setState }: { reverse?: boolean; setState: (state: "row
             initial={{ opacity: 0, filter: "blur(5px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(5px)" }}
-            className={`flex w-64 ${reverse ? "flex-col-reverse" : "flex-col"} overflow-hidden rounded-3xl border border-black/20 bg-white p-6`}
+            className={`flex w-64 md:w-80 lg:w-96 ${reverse ? "flex-col-reverse" : "flex-col"} overflow-hidden rounded-3xl border border-black/20 bg-white p-6 md:p-7 lg:p-7.5`}
             style={{ boxShadow: "inset 0 5px 5px #F8F8F8, inset 0 -1px 2px #D2D7DB" }}
         >
             <motion.button
                 layout
                 initial={{ translateX: "-0.5rem" }}
                 animate={{ translateX: 0 }}
-                className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white"
-                onClick={() => setState("row")}
+                className="group -mr-0.5 w-fit cursor-pointer rounded-full border border-black/10 px-2.5 py-0.5 text-sm transition-colors duration-200 hover:bg-black hover:text-white md:text-base lg:text-lg"
+                onClick={returnState}
             >
                 <motion.span className="ease-overshoot -mr-3 opacity-0 transition-all duration-300 group-hover:mr-1 group-hover:opacity-100">
                     {"<-"}
@@ -224,23 +227,43 @@ function Card({ reverse, setState }: { reverse?: boolean; setState: (state: "row
                 layout
                 initial={{ translateY: "0.5rem" }}
                 animate={{ translateY: 0 }}
-                className={`${reverse ? "mb-4" : "mt-4"} flex flex-col gap-3`}
+                className={`${reverse ? "mb-4" : "mt-4"} flex flex-col gap-3 md:text-lg lg:text-xl`}
             >
                 <motion.span layout>
-                    Coded <br /> <span className="cursor-pointer text-indigo-400 hover:brightness-50">@bygunique</span>
+                    Coded <br />{" "}
+                    <a
+                        href="https://x.com/@bygunique"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="cursor-pointer text-indigo-400 hover:brightness-50"
+                    >
+                        @bygunique
+                    </a>
                 </motion.span>
                 <motion.span layout>
                     Inspired by <br />{" "}
-                    <span className="cursor-pointer text-indigo-400 hover:brightness-50">@bossadizenith</span>
+                    <a
+                        href="https://x.com/@bossadizenith"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="cursor-pointer text-indigo-400 hover:brightness-50"
+                    >
+                        @bossadizenith
+                    </a>
                     <br />
-                    <span className="cursor-pointer text-indigo-400 hover:brightness-50">@t_bekkers</span>
+                    <a
+                        href="https://x.com/@t_bekkers"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="cursor-pointer text-indigo-400 hover:brightness-50"
+                    >
+                        @t_bekkers
+                    </a>
                 </motion.span>
             </motion.div>
         </motion.div>
     );
 }
-
-// --- Main App ---
 
 export default function App() {
     const [state, setState] = useState<"row" | "column" | "card">("row");
@@ -251,7 +274,6 @@ export default function App() {
         <div className="flex h-full w-full flex-col items-center justify-center">
             <MotionConfig transition={iOSSpring}>
                 <motion.div
-                    // layout
                     animate={{ translateY: isHovered ? "0.15rem" : 0 }}
                     transition={{ ...iOSSpring, damping: 15, stiffness: 400 }}
                     onMouseEnter={() => setIsHovered(true)}
@@ -266,9 +288,6 @@ export default function App() {
                         toggleReverse={() => setIsReversed(prev => !prev)}
                     />
 
-                    {/* FIX: Using display: grid here keeps both elements in the exact same spot 
-                        during the transition, preventing the "flying/springing" layout bug.
-                    */}
                     <div className="grid grid-cols-1 grid-rows-1 items-center justify-items-center">
                         <AnimatePresence mode="popLayout">
                             {state === "card" ? (
@@ -277,12 +296,7 @@ export default function App() {
                                 </div>
                             ) : (
                                 <div key="list-wrapper" className="col-start-1 row-start-1">
-                                    <List
-                                        reverse={isReversed}
-                                        state={state}
-                                        setState={setState}
-                                        isColumn={state === "column"}
-                                    />
+                                    <List reverse={isReversed} setState={setState} isColumn={state === "column"} />
                                 </div>
                             )}
                         </AnimatePresence>
