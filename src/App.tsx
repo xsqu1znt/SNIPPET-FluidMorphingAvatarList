@@ -2,16 +2,16 @@ import { AnimatePresence, motion, MotionConfig, type Transition } from "motion/r
 import { useState } from "react";
 
 const AVATARS = [
-    { id: 1, src: "/avatars/11.svg", name: "Alayna", status: "online", bio: "Frontend Dev" },
-    { id: 2, src: "/avatars/2.svg", name: "Alex", status: "idle", bio: "Backend Dev" },
-    { id: 3, src: "/avatars/3.svg", name: "Henry", status: "online", bio: "Graphic Artist" },
-    { id: 4, src: "/avatars/4.svg", name: "Alicia", status: "dnd", bio: "Frontend Dev" },
-    { id: 5, src: "/avatars/5.svg", name: "Mel", status: "idle", bio: "Sr. Intern" },
-    { id: 6, src: "/avatars/6.svg", name: "Sasha", status: "online", bio: "Backend Dev" },
-    { id: 7, src: "/avatars/7.svg", name: "John", status: "online", bio: "Social Lead" },
-    { id: 8, src: "/avatars/8.svg", name: "Cristi", status: "offline", bio: "Copywriter" },
-    { id: 9, src: "/avatars/9.svg", name: "Morika", status: "dnd", bio: "Social Lead" },
-    { id: 10, src: "/avatars/10.svg", name: "Lenny", status: "offline", bio: "Designer" }
+    { id: 1, src: "avatar-list/avatars/11.svg", name: "Alayna", status: "online", bio: "Frontend Dev" },
+    { id: 2, src: "avatar-list/avatars/2.svg", name: "Alex", status: "idle", bio: "Backend Dev" },
+    { id: 3, src: "avatar-list/avatars/3.svg", name: "Henry", status: "online", bio: "Graphic Artist" },
+    { id: 4, src: "avatar-list/avatars/4.svg", name: "Alicia", status: "dnd", bio: "Frontend Dev" },
+    { id: 5, src: "avatar-list/avatars/5.svg", name: "Mel", status: "idle", bio: "Sr. Intern" },
+    { id: 6, src: "avatar-list/avatars/6.svg", name: "Sasha", status: "online", bio: "Backend Dev" },
+    { id: 7, src: "avatar-list/avatars/7.svg", name: "John", status: "online", bio: "Social Lead" },
+    { id: 8, src: "avatar-list/avatars/8.svg", name: "Cristi", status: "offline", bio: "Copywriter" },
+    { id: 9, src: "avatar-list/avatars/9.svg", name: "Morika", status: "dnd", bio: "Social Lead" },
+    { id: 10, src: "avatar-list/avatars/10.svg", name: "Lenny", status: "offline", bio: "Designer" }
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 const iOSSpring: Transition = {
@@ -101,7 +101,7 @@ function List({
                         layout
                         draggable={false}
                         className="size-12 rounded-full select-none md:size-24 lg:size-28"
-                        src="/avatars/1.svg"
+                        src="avatar-list/avatars/1.svg"
                     />
                     <motion.div layout className="flex flex-col gap-0.5">
                         <motion.h1 layout className="md:text-lg lg:text-xl">
